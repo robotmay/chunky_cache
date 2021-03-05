@@ -44,6 +44,12 @@ Or install it yourself as:
 
 This will execute only one call to your cache store, using `Rails.cache.fetch_multi`.
 
+## How does it work?
+
+The helpers use Rails' built-in helper `capture` to consume the contents of their blocks and turn them into strings. `chunky_cache` does this immediately, and returns the final output after mixing everything together. But `cache_chunk` instead doesn't execute its block, but stores it in an instance variable established by `chunky_cache`, and it then returns a cache key string. At this point the template is thus half-complete, with sections missing and only weird strings in their place.
+
+`chunky_cache` then performs a cache multi-fetch, passing in all the keys it knows about. For any missing keys, the block captured by `cache_chunk` is executed and returned to the cache. The mix of cached/non-cached chunks are then reinserted into the main block content, replacing the key placeholders. A final compiled string is then returned.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
