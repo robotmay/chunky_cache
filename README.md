@@ -2,7 +2,7 @@
 
 This gem does weird things with Rails caching. Well, one weird thing. Have you ever wanted to perform multiple cache calls on a single view, but realised that this gets quite expensive in terms of network calls to your cache? Fret no more!
 
-chunky_cache adds two Rails helpers which mess with the rendering order, allowing you to make multiple cache calls _but only execute one actual cache query_. It does this by capturing the view output inside the `chunky_cache` and `cache_chunk` helpers. These are named poorly.
+chunky_cache adds two Rails helpers which mess with the rendering order, allowing you to make multiple cache calls _but only execute one actual cache query_. It does this by capturing the view output inside the `chunky_cache` and `cache_chunk` helpers. These are named poorly and confusingly.
 
 ## Installation
 
@@ -25,7 +25,7 @@ Or install it yourself as:
 ```erb
 <%= chunky_cache(expires_in: 10.minutes) do %>
   <h1>Something not cached</h1>
-  
+
   <p>
     <%= cache_chunk(:important_message, current_user) %>
       <strong>This is very important, <%= current_user.name %>!</strong>
