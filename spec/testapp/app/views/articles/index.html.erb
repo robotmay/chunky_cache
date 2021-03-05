@@ -1,0 +1,13 @@
+<%= chunky_cache(expires_in: 10.minutes) do %>
+  <h1>This title isn't cached because reasons</h1>
+
+  <%= cache_chunk(:h2) do %>
+    <h2>But this one is, also because reasons</h2>
+  <% end %>
+
+  <%= cache_chunk(:chunky_whatsit) do %>
+    <h3>How does it go? Chunky...beercan? :confused:</h3>
+  <% end %>
+
+  <%= render partial: "beercan" %>
+<% end %>
