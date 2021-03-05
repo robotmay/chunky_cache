@@ -163,9 +163,9 @@ PLATFORMS
 DEPENDENCIES
   chunky_cache!
   pry
-  rails (>= 4)
+  rails (~> 6)
   rake (~> 12.0)
-  rspec-rails
+  rspec-rails (~> 4)
 
 BUNDLED WITH
    2.1.4

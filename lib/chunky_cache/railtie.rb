@@ -3,10 +3,12 @@
 require_relative "view_helpers"
 
 module ChunkyCache
-  class Railtie < ::Rails::Railtie
+  class Railtie < Rails::Railtie
     initializer "chunky_cache.view_helpers" do |app|
-      self.class_eval do
-        include ChunkyCache::ViewHelpers
+      ActiveSupport.on_load(:action_view) do
+        self.class_eval do
+          include ChunkyCache::ViewHelpers
+        end
       end
     end
   end
