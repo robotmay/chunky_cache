@@ -1,8 +1,8 @@
-# ChunkyCache
+# chunky_cache
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/chunky_cache`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem does weird things with Rails caching. Well, one weird thing. Have you ever wanted to perform multiple cache calls on a single view, but realised that this gets quite expensive in terms of network calls to your cache? Fret no more!
 
-TODO: Delete this and the text above, and describe your gem
+chunky_cache adds two Rails helpers which mess with the rendering order, allowing you to make multiple cache calls _but only execute one actual cache query_. It does this by capturing the view output inside the `chunky_cache` and `cache_chunk` helpers. These are named poorly.
 
 ## Installation
 
@@ -22,7 +22,27 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```erb
+<%= chunky_cache(expires_in: 10.minutes) do %>
+  <h1>Something not cached</h1>
+  
+  <p>
+    <%= cache_chunk(:important_message, current_user) %>
+      <strong>This is very important, <%= current_user.name %>!</strong>
+    <% end %>
+
+    <%= cache_chunk(:the_actual_message) %>
+      <oblique>No, really</oblique>
+    <% end %>
+  </p>
+
+  <%= cache_chunk(:footer) %>
+    <p>Fin.</p>
+  <% end %>
+<% end %>
+```
+
+This will execute only one call to your cache store, using `Rails.cache.fetch_multi`.
 
 ## Development
 
@@ -32,8 +52,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/chunky_cache.
-
+Please feel free to submit bug reports or merge requests. Don't use singlequotes in Ruby or you'll make me mad.
 
 ## License
 
