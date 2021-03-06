@@ -44,7 +44,7 @@ Or install it yourself as:
 
 This will execute only one call to your cache store, using `Rails.cache.fetch_multi`.
 
-When using `cache_chunk` inside a block, use its ability to pass the key components to the block
+When using `cache_chunk` inside a loop, use its ability to pass the key components to the block
 to persist the context (i.e. it'll be super borked if you don't do this):
 
 ```slim
@@ -55,7 +55,7 @@ to persist the context (i.e. it'll be super borked if you don't do this):
 
 ## How does it work?
 
-The helpers use Rails' built-in helper `capture` to consume the contents of their blocks and turn them into strings. `chunky_cache` does this immediately, and returns the final output after mixing everything together. But `cache_chunk` instead doesn't execute its block, but stores it in an instance variable established by `chunky_cache`, and it then returns a cache key string. At this point the template is thus half-complete, with sections missing and only weird strings in their place.
+The helpers use Rails' built-in helper `capture` to consume the contents of their blocks and turn them into strings. `chunky_cache` does this immediately, and returns the final output after mixing everything together. But `cache_chunk` doesn't execute its block, instead storing it in an instance variable established by `chunky_cache`, and it then returns a cache key string. At this point the template is thus half-complete, with sections missing and only weird strings in their place.
 
 `chunky_cache` then performs a cache multi-fetch, passing in all the keys it knows about. For any missing keys, the block captured by `cache_chunk` is executed and returned to the cache. The mix of cached/non-cached chunks are then reinserted into the main block content, replacing the key placeholders. A final compiled string is then returned.
 
