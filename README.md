@@ -44,6 +44,15 @@ Or install it yourself as:
 
 This will execute only one call to your cache store, using `Rails.cache.fetch_multi`.
 
+When using `cache_chunk` inside a block, use its ability to pass the key components to the block
+to persist the context (i.e. it'll be super borked if you don't do this):
+
+```slim
+  - for article in @articles
+    = cache_chunk(article) do |article|
+      h1= article.title
+```
+
 ## How does it work?
 
 The helpers use Rails' built-in helper `capture` to consume the contents of their blocks and turn them into strings. `chunky_cache` does this immediately, and returns the final output after mixing everything together. But `cache_chunk` instead doesn't execute its block, but stores it in an instance variable established by `chunky_cache`, and it then returns a cache key string. At this point the template is thus half-complete, with sections missing and only weird strings in their place.
