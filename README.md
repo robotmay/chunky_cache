@@ -27,16 +27,16 @@ Or install it yourself as:
   <h1>Something not cached</h1>
 
   <p>
-    <%= cache_chunk(:important_message, current_user) %>
+    <%= cache_chunk(:important_message, current_user) do %>
       <strong>This is very important, <%= current_user.name %>!</strong>
     <% end %>
 
-    <%= cache_chunk(:the_actual_message) %>
+    <%= cache_chunk(:the_actual_message) do %>
       <oblique>No, really</oblique>
     <% end %>
   </p>
 
-  <%= cache_chunk(:footer) %>
+  <%= cache_chunk(:footer) do %>
     <p>Fin.</p>
   <% end %>
 <% end %>
