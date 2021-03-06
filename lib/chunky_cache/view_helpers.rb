@@ -29,13 +29,18 @@ module ChunkyCache
       # we multi-fetch all the keys from the cache, or call the `cache_chunk` blocks
       # for missing values.
       chunks = Rails.cache.fetch_multi(*blocks.keys, **cache_options) do |missing_key|
+        logger.debug("Chunk cache miss: #{missing_key}")
+
         capture do
-          blocks[missing_key].call
+          block, context = *blocks[missing_key]
+          block.call(*context)
         end
       end
 
       # Then we replace the placeholders with our new compiled template data
       chunks.each do |key, chunk|
+        logger.debug("Chunk key replacement: #{key}")
+
         big_ol_strang.gsub!(key, (chunk || ""))
       end
 
@@ -46,14 +51,14 @@ module ChunkyCache
     # and instead returns just a placeholder string for replacement
     # at the end of the `chunky_cache` run.
     #
-    # @param keys [*Object] one or multiple objects which respond to `#cache_key` or convert to strings
+    # @param context [*Object] one or multiple objects which respond to `#cache_key` or convert to strings
     # @return [String] the placeholder key
-    def cache_chunk(*keys, &block)
+    def cache_chunk(*context, &block)
       raise MissingChunkyCacheError if @chunky_key_blocks.nil?
 
-      key = keys.map! { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
+      key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
 
-      @chunky_key_blocks[template_root_key][key] = block
+      @chunky_key_blocks[template_root_key][key] = [block, context]
 
       return key
     end
