@@ -68,6 +68,13 @@ RSpec.describe ChunkyCache do
 
           expect(helper.instance_variable_get(:@chunky_key_blocks)["beercan:12345"]["beercan:12345:test_key"]).to_not be_nil
         end
+
+        it "supplies the context back to the block" do
+          helper.cache_chunk(:test, :keys) do |first, second|
+            expect(first).to eq(:test)
+            expect(second).to eq(:keys)
+          end
+        end
       end
 
       context "no key blocks established" do
