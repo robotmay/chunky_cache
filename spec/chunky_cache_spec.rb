@@ -98,5 +98,11 @@ RSpec.describe ChunkyCache do
       expect(response.body).to include("But this one is")
       expect(response.body).to include(":bacon:")
     end
+
+    it "renders cache calls in a loop correctly" do
+      %w(cartoon fox tribute act).each do |word|
+        expect(response.body).to include("<li>#{word}</li>")
+      end
+    end
   end
 end
