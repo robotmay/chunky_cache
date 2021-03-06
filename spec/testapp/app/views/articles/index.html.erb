@@ -5,6 +5,14 @@
     <h2>But this one is, also because reasons</h2>
   <% end %>
 
+  <ul>
+    <% for fox in ["cartoon", "fox", "tribute", "act"] do %>
+      <%= cache_chunk(fox) do |fox| %>
+        <li><%= fox %></li>
+      <% end %>
+    <% end %>
+  </ul>
+
   <%= cache_chunk(:chunky_whatsit) do %>
     <h3>How does it go? Chunky...beercan? :confused:</h3>
   <% end %>
