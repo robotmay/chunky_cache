@@ -59,11 +59,9 @@ The helpers use Rails' built-in helper `capture` to consume the contents of thei
 
 `chunky_cache` then performs a cache multi-fetch, passing in all the keys it knows about. For any missing keys, the block captured by `cache_chunk` is executed and returned to the cache. The mix of cached/non-cached chunks are then reinserted into the main block content, replacing the key placeholders. A final compiled string is then returned.
 
-## Development
+## Why is this useful?
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+If you run `memcached` as your cache store on the same server as your Rails app, this gem is probably not very useful. Where it shines, however, is when network latency becomes more expensive than what you are caching. It allows you to cache lots of little chunks of markup, with different cache keys, and expend only one network request to fetch it. This allows you to start caching really trivial parts of templates that would never be worth caching normally; like caching individual navigation links in a menu, with active/inactive states, rather than caching the whole menu for each state. You can break up your larger caches into small sections with different keys, allowing parts of a cache to contain user-specific data but sharing generic data for everyone. This can be a useful cache storage size optimisation.
 
 ## Contributing
 
