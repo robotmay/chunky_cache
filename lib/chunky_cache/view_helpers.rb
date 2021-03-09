@@ -14,8 +14,9 @@ module ChunkyCache
     # @param expires_in [ActiveSupport::Duration, Integer] expiry time will be passed to the underlying store
     # @return [ActiveSupport::SafeBuffer]
     def chunky_cache(**cache_options)
-      @chunky_key_blocks ||= {}
-      blocks = @chunky_key_blocks[template_root_key] = {}
+      establish_memory_cache(cache_options)
+
+      blocks = memory_cache[:key_blocks]
 
       # Capture the block, storing its output in a string
       big_ol_strang = capture do
@@ -24,6 +25,9 @@ module ChunkyCache
 
       # This probably shouldn't happen
       return if big_ol_strang.nil?
+    
+      # Return if caching is disabled
+      return big_ol_strang unless memory_cache[:perform_caching]
 
       # Now the cache blocks are populated and the placeholders in place,
       # we multi-fetch all the keys from the cache, or call the `cache_chunk` blocks
@@ -54,16 +58,32 @@ module ChunkyCache
     # @param context [*Object] one or multiple objects which respond to `#cache_key` or convert to strings
     # @return [String] the placeholder key
     def cache_chunk(*context, &block)
-      raise MissingChunkyCacheError if @chunky_key_blocks.nil?
+      raise MissingChunkyCacheError if @chunky_cache_store.nil?
+      return block.call unless memory_cache[:perform_caching]
 
       key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
 
-      @chunky_key_blocks[template_root_key][key] = [block, context]
+      memory_cache[:key_blocks][key] = [block, context]
 
       return key
     end
 
     private
+
+    def establish_memory_cache(cache_options)
+      conditional_if = cache_options.delete(:if)&.call
+      conditional_unless = cache_options.delete(:unless)&.call
+
+      @chunky_cache_store ||= {}
+      @chunky_cache_store[template_root_key] = {
+        key_blocks: {},
+        perform_caching: (conditional_if == true || conditional_unless == false || true)
+      }
+    end
+
+    def memory_cache
+      @chunky_cache_store[template_root_key]
+    end
 
     # Returns the digest of the current template
     #
