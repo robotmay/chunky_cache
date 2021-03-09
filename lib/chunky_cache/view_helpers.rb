@@ -11,10 +11,12 @@ module ChunkyCache
     # All keyword arguments are passed to the cache store,
     # but Rails only supports `expires_in` for `fetch_multi` anyway.
     #
+    # @param root_keys [*Object] key parts to apply to all `cache_chunk` calls.
     # @param expires_in [ActiveSupport::Duration, Integer] expiry time will be passed to the underlying store
     # @return [ActiveSupport::SafeBuffer]
-    def chunky_cache(**cache_options)
+    def chunky_cache(*root_keys, **cache_options)
       @chunky_key_blocks ||= {}
+      @chunky_root_keys = root_keys.unshift(template_root_key)
       blocks = @chunky_key_blocks[template_root_key] = {}
 
       # Capture the block, storing its output in a string
@@ -56,7 +58,7 @@ module ChunkyCache
     def cache_chunk(*context, &block)
       raise MissingChunkyCacheError if @chunky_key_blocks.nil?
 
-      key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
+      key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(@chunky_root_keys).join(":")
 
       @chunky_key_blocks[template_root_key][key] = [block, context]
 

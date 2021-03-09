@@ -45,6 +45,22 @@ RSpec.describe ChunkyCache do
       it "substitutes the block values" do
         expect(subject).to eq("substitute value")
       end
+
+      context "when root_keys are provided" do
+        subject do
+          helper.chunky_cache(:root_key, :another_key, expires_in: 10.minutes) do
+            helper.cache_chunk(:test_key) do
+              "test value"
+            end
+          end
+        end
+
+        it "queries the cache" do
+          expect(cache).to receive(:fetch_multi).with("root_key:another_key:beercan:12345:test_key", expires_in: 10.minutes)
+
+          subject
+        end
+      end
     end
 
     describe "#cache_chunk" do
