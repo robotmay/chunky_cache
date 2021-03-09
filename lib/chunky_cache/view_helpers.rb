@@ -16,8 +16,10 @@ module ChunkyCache
     # @return [ActiveSupport::SafeBuffer]
     def chunky_cache(*root_keys, **cache_options)
       @chunky_key_blocks ||= {}
-      @chunky_root_keys = root_keys.unshift(template_root_key)
       blocks = @chunky_key_blocks[template_root_key] = {}
+
+      @chunky_root_keys ||= {}
+      @chunky_root_keys[template_root_key] = root_keys.unshift(template_root_key)
 
       # Capture the block, storing its output in a string
       big_ol_strang = capture do
@@ -58,7 +60,7 @@ module ChunkyCache
     def cache_chunk(*context, &block)
       raise MissingChunkyCacheError if @chunky_key_blocks.nil?
 
-      key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(@chunky_root_keys).join(":")
+      key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(@chunky_root_keys[template_root_key]).join(":")
 
       @chunky_key_blocks[template_root_key][key] = [block, context]
 
@@ -71,7 +73,7 @@ module ChunkyCache
     #
     # @return [String]
     def template_root_key
-      digest_path_from_template(@current_template)
+      @template_root_key ||= digest_path_from_template(@current_template)
     end
   end
 end
