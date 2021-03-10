@@ -48,16 +48,14 @@ RSpec.describe ChunkyCache do
       end
 
       it "caches by default" do
-        expect(helper.memory_cache[:perform_caching]).to be(true)
+        expect(helper.send(:memory_cache)[:perform_caching]).to be(true)
       end
     end
 
     describe "#cache_chunk" do
       subject do
-        helper.chunky_cache(expires_in: 10.minutes) do
-          helper.cache_chunk(:test_key) do
-            "test value"
-          end
+        helper.cache_chunk(:test_key) do
+          "test value"
         end
       end
 
