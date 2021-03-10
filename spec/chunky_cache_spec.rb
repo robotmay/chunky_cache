@@ -124,7 +124,9 @@ RSpec.describe ChunkyCache do
 
     it "includes cached data" do
       expect(response.body).to include("But this one is")
-      expect(response.body).to include(":bacon:")
+      expect(response.body).to include("chunky")
+      expect(response.body).to include("beercan")
+      expect(response.body).to include("probably")
     end
 
     it "renders cache calls in a loop correctly" do
