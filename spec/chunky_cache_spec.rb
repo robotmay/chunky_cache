@@ -54,25 +54,25 @@ RSpec.describe ChunkyCache do
       end
 
       it "caches if `if` conditional succeeds" do
-        helper.chunky_cache(expires_in: 10.minutes, if: true) {}
+        helper.chunky_cache(expires_in: 10.minutes, if: -> { true }) {}
 
         expect(helper.instance_variable_get(:@chunky_cache_store)[:perform_caching]).to be(true)
       end
 
       it "doesn't cache if `if` conditional fails" do
-        helper.chunky_cache(expires_in: 10.minutes, if: false) {}
+        helper.chunky_cache(expires_in: 10.minutes, if: -> { false }) {}
 
         expect(helper.instance_variable_get(:@chunky_cache_store)[:perform_caching]).to be(false)
       end
 
       it "caches if `unless` conditional succeeds" do
-        helper.chunky_cache(expires_in: 10.minutes, unless: false) {}
+        helper.chunky_cache(expires_in: 10.minutes, unless: -> { false }) {}
 
         expect(helper.instance_variable_get(:@chunky_cache_store)[:perform_caching]).to be(true)
       end
 
       it "doesn't cache if `unless` conditional fails" do
-        helper.chunky_cache(expires_in: 10.minutes, unless: true) {}
+        helper.chunky_cache(expires_in: 10.minutes, unless: -> { true }) {}
 
         expect(helper.instance_variable_get(:@chunky_cache_store)[:perform_caching]).to be(false)
       end
