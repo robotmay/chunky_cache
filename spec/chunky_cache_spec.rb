@@ -46,6 +46,10 @@ RSpec.describe ChunkyCache do
       it "substitutes the block values" do
         expect(subject).to eq("substitute value")
       end
+
+      it "caches by default" do
+        expect(helper.memory_cache[:perform_caching]).to be(true)
+      end
     end
 
     describe "#cache_chunk" do
