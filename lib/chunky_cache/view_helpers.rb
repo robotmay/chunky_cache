@@ -75,13 +75,16 @@ module ChunkyCache
 
     private
 
-    def establish_memory_cache(cache_options)
-      conditional_if = cache_options.delete(:if)&.call
-      conditional_unless = cache_options.delete(:unless)&.call
+    def establish_memory_cache(cache_options, perform_caching: true)
+      if conditional_if = cache_options.delete(:if)
+        perform_caching = (conditional_if.call == true)
+      elsif conditional_unless = cache_options.delete(:unless)
+        perform_caching = (conditional_unless.call == false)
+      end
 
       @chunky_cache_store = {
         key_blocks: {},
-        perform_caching: (conditional_if == true || conditional_unless == false || true)
+        perform_caching: perform_caching
       }
     end
 
