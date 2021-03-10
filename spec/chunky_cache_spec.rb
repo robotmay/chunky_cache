@@ -54,8 +54,10 @@ RSpec.describe ChunkyCache do
 
     describe "#cache_chunk" do
       subject do
-        helper.cache_chunk(:test_key) do
-          "test value"
+        helper.chunky_cache(expires_in: 10.minutes) do
+          helper.cache_chunk(:test_key) do
+            "test value"
+          end
         end
       end
 
