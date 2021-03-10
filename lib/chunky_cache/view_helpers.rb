@@ -64,8 +64,7 @@ module ChunkyCache
     # @param context [*Object] one or multiple objects which respond to `#cache_key` or convert to strings
     # @return [String] the placeholder key
     def cache_chunk(*context, &block)
-      raise MissingChunkyCacheError if memory_cache.nil?
-      return block.call(*context) unless memory_cache[:perform_caching]
+      return block.call(*context) if memory_cache.nil? || !memory_cache[:perform_caching]
 
       key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
 

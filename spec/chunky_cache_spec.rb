@@ -85,8 +85,22 @@ RSpec.describe ChunkyCache do
       end
 
       context "no key blocks established" do
-        it "raises an error" do
-          expect { subject }.to raise_error(ChunkyCache::MissingChunkyCacheError)
+        before do
+          helper.instance_variable_set(:@chunky_cache_store, nil)
+        end
+
+        it "renders the block immediately" do
+          expect(subject).to eq("test value")
+        end
+      end
+
+      context "caching is disabled" do
+        before do
+          helper.instance_variable_set(:@chunky_cache_store, { key_blocks: {}, perform_caching: false })
+        end
+
+        it "renders the block immediately" do
+          expect(subject).to eq("test value")
         end
       end
     end
