@@ -63,7 +63,7 @@ RSpec.describe ChunkyCache do
 
       context "key blocks established" do
         before do
-          helper.instance_variable_set(:@chunky_cache_store, { key_blocks: {} })
+          helper.instance_variable_set(:@chunky_cache_store, { key_blocks: {}, perform_caching: true })
         end
 
         it "returns the key" do
