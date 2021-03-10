@@ -17,6 +17,7 @@ RSpec.describe ChunkyCache do
     before do
       allow(Rails).to receive(:cache).and_return(cache)
       allow(cache).to receive(:fetch_multi) { { "beercan:12345:test_key" => "substitute value" } }
+      allow(helper).to receive(:reset_memory_cache).and_return(nil)
       allow(helper).to receive(:template_root_key).and_return("beercan:12345")
     end
 
