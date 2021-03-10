@@ -14,6 +14,10 @@ module ChunkyCache
     # @param expires_in [ActiveSupport::Duration, Integer] expiry time will be passed to the underlying store
     # @return [ActiveSupport::SafeBuffer]
     def chunky_cache(**cache_options)
+      # Return if the memory cache is already established, as an outer run of
+      # this method is in progress already
+      return yield if memory_cache.present?
+
       establish_memory_cache(cache_options)
 
       blocks = memory_cache[:key_blocks]
@@ -48,6 +52,8 @@ module ChunkyCache
         big_ol_strang.gsub!(key, (chunk || ""))
       end
 
+      reset_memory_cache
+
       big_ol_strang.html_safe
     end
 
@@ -58,7 +64,7 @@ module ChunkyCache
     # @param context [*Object] one or multiple objects which respond to `#cache_key` or convert to strings
     # @return [String] the placeholder key
     def cache_chunk(*context, &block)
-      raise MissingChunkyCacheError if @chunky_cache_store.nil?
+      raise MissingChunkyCacheError if memory_cache.nil?
       return block.call unless memory_cache[:perform_caching]
 
       key = context.map { |k| k.try(:cache_key) || k.to_s }.unshift(template_root_key).join(":")
@@ -74,15 +80,18 @@ module ChunkyCache
       conditional_if = cache_options.delete(:if)&.call
       conditional_unless = cache_options.delete(:unless)&.call
 
-      @chunky_cache_store ||= {}
-      @chunky_cache_store[template_root_key] = {
+      @chunky_cache_store = {
         key_blocks: {},
         perform_caching: (conditional_if == true || conditional_unless == false || true)
       }
     end
 
+    def reset_memory_cache
+      @chunky_cache_store = nil
+    end
+
     def memory_cache
-      @chunky_cache_store[template_root_key]
+      @chunky_cache_store
     end
 
     # Returns the digest of the current template
