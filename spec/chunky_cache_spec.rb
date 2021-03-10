@@ -109,30 +109,40 @@ RSpec.describe ChunkyCache do
   describe ArticlesController, type: :controller do
     render_views
 
-    before do
-      get :index
-    end
-
-    it "returns successfully" do
-      expect(response).to have_http_status(:ok)
-    end
-
-    it "includes uncached data" do
-      expect(response.body).to include("This title isn't cached")
-      expect(response.body).to include("No wait, it was...")
-    end
-
-    it "includes cached data" do
-      expect(response.body).to include("But this one is")
-      expect(response.body).to include("chunky")
-      expect(response.body).to include("beercan")
-      expect(response.body).to include("probably")
-    end
-
-    it "renders cache calls in a loop correctly" do
-      %w(cartoon fox tribute act).each do |word|
-        expect(response.body).to include("<li>#{word}</li>")
+    describe "content" do
+      before do
+        get :index
       end
+
+      it "returns successfully" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "includes uncached data" do
+        expect(response.body).to include("This title isn't cached")
+        expect(response.body).to include("No wait, it was...")
+      end
+
+      it "includes cached data" do
+        expect(response.body).to include("But this one is")
+        expect(response.body).to include("chunky")
+        expect(response.body).to include("beercan")
+        expect(response.body).to include("probably")
+      end
+
+      it "renders cache calls in a loop correctly" do
+        %w(cartoon fox tribute act).each do |word|
+          expect(response.body).to include("<li>#{word}</li>")
+        end
+      end
+    end
+
+    describe "cache store" do
+      expect(Rails.cache).to receive(:fetch_multi).with(
+        :test
+      )
+
+      get :index
     end
   end
 end
