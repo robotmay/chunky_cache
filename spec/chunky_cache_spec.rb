@@ -32,8 +32,8 @@ RSpec.describe ChunkyCache do
       it "establishes the chunk hash" do
         subject
 
-        expect(helper.instance_variable_get(:@chunky_key_blocks)).to be_a(Hash)
-        expect(helper.instance_variable_get(:@chunky_key_blocks)["beercan:12345"]).to be_a(Hash)
+        expect(helper.instance_variable_get(:@chunky_cache_store)).to be_a(Hash)
+        expect(helper.instance_variable_get(:@chunky_cache_store)[:key_blocks]).to be_a(Hash)
       end
 
       it "queries the cache" do
@@ -56,7 +56,7 @@ RSpec.describe ChunkyCache do
 
       context "key blocks established" do
         before do
-          helper.instance_variable_set(:@chunky_key_blocks, { "beercan:12345" => {} })
+          helper.instance_variable_set(:@chunky_cache_store, { key_blocks: {} })
         end
 
         it "returns the key" do
@@ -66,7 +66,7 @@ RSpec.describe ChunkyCache do
         it "stores the key and block in memory" do
           subject
 
-          expect(helper.instance_variable_get(:@chunky_key_blocks)["beercan:12345"]["beercan:12345:test_key"]).to_not be_nil
+          expect(helper.instance_variable_get(:@chunky_cache_store)[:key_blocks]["beercan:12345:test_key"]).to_not be_nil
         end
 
         it "supplies the context back to the block" do

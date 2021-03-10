@@ -86,12 +86,12 @@ module ChunkyCache
       }
     end
 
-    def reset_memory_cache
-      @chunky_cache_store = nil
-    end
-
     def memory_cache
       @chunky_cache_store
+    end
+
+    def reset_memory_cache
+      @chunky_cache_store = nil
     end
 
     # Returns the digest of the current template
