@@ -138,11 +138,13 @@ RSpec.describe ChunkyCache do
     end
 
     describe "cache store" do
-      expect(Rails.cache).to receive(:fetch_multi).with(
-        :test
-      )
+      it "only calls the cache once with all keys" do
+        expect(Rails.cache).to receive(:fetch_multi).with(
+          :test
+        )
 
-      get :index
+        get :index
+      end
     end
   end
 end
