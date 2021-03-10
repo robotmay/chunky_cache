@@ -48,6 +48,8 @@ RSpec.describe ChunkyCache do
       end
 
       it "caches by default" do
+        subject
+        
         expect(helper.instance_variable_get(:@chunky_cache_store)[:perform_caching]).to be(true)
       end
     end
