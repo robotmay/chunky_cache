@@ -152,7 +152,7 @@ RSpec.describe ChunkyCache do
           "articles/_beercan:#{partial_hash}:chunky:revelation",
           "articles/_beercan:#{partial_hash}:beercan:revelation",
           "articles/_beercan:#{partial_hash}:probably:revelation",
-          { expires_in: 10 minutes }
+          { expires_in: 10.minutes }
         )
 
         get :index
