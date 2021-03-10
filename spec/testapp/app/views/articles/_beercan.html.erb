@@ -1,7 +1,7 @@
 <%= chunky_cache do %>
   <p>No wait, it was...</p>
 
-  <%= cache_chunk(:revelation) do %>
+  <%= cache_chunk(werd, :revelation) do |werd| %>
     <h1><%= werd %></h1>
   <% end %>
 <% end %>
