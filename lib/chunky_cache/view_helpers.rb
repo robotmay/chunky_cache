@@ -17,6 +17,7 @@ module ChunkyCache
       # Return if the memory cache is already established, as an outer run of
       # this method is in progress already
       return yield if memory_cache.present?
+      return yield unless memory_cache[:perform_caching]
 
       establish_memory_cache(cache_options)
 
@@ -29,16 +30,11 @@ module ChunkyCache
 
       # This probably shouldn't happen
       return if big_ol_strang.nil?
-    
-      # Return if caching is disabled
-      return big_ol_strang unless memory_cache[:perform_caching]
-
+  
       # Now the cache blocks are populated and the placeholders in place,
       # we multi-fetch all the keys from the cache, or call the `cache_chunk` blocks
       # for missing values.
       chunks = Rails.cache.fetch_multi(*blocks.keys, **cache_options) do |missing_key|
-        logger.debug("Chunk cache miss: #{missing_key}")
-
         capture do
           block, context = *blocks[missing_key]
           block.call(*context)
@@ -46,15 +42,11 @@ module ChunkyCache
       end
 
       # Then we replace the placeholders with our new compiled template data
-      chunks.each do |key, chunk|
-        logger.debug("Chunk key replacement: #{key}")
-
-        big_ol_strang.gsub!(key, (chunk || ""))
-      end
+      repopulated = MultiStringReplace.replace(big_ol_strang, chunks)
 
       reset_memory_cache
 
-      big_ol_strang.html_safe
+      repopulated.html_safe
     end
 
     # Denote a cached chunk of markup. This captures the block
