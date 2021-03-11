@@ -46,9 +46,10 @@ module ChunkyCache
         end
       end
 
-      reset_memory_cache
-
       MultiStringReplace.replace(big_ol_strang, chunks).html_safe
+      
+    ensure
+      reset_memory_cache
     end
 
     # Denote a cached chunk of markup. This captures the block
