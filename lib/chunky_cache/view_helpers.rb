@@ -22,7 +22,7 @@ module ChunkyCache
       establish_memory_cache(cache_options)
 
       # Exit out if caching isn't enabled
-      return yield unless memory_cache[:perform_caching]
+      return capture { yield } unless memory_cache[:perform_caching]
 
       blocks = memory_cache[:key_blocks]
       output_buffer = ActiveSupport::SafeBuffer.new
