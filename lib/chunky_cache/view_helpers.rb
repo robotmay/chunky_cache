@@ -50,7 +50,7 @@ module ChunkyCache
         output_buffer << big_ol_strang.slice!(0..(big_ol_strang.index(key) - 1)).html_safe
 
         # Remove the key
-        big_ol_strang.slice!(0..key.length)
+        big_ol_strang.slice!(key)
         
         output_buffer << chunks.delete(key)
       end
