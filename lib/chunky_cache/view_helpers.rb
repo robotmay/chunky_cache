@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "multi_string_replace"
+
 module ChunkyCache
   module ViewHelpers
     # Begin an exciting cache block. This has to wrap
@@ -46,7 +48,7 @@ module ChunkyCache
 
       reset_memory_cache
 
-      (big_ol_strang % chunks).html_safe
+      MultiStringReplace.replace(big_ol_strang, chunks).html_safe
     end
 
     # Denote a cached chunk of markup. This captures the block
