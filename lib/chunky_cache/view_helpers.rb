@@ -48,7 +48,7 @@ module ChunkyCache
       last_key_length = 0
 
       chunks.keys.each do |key|
-        output_buffer << big_ol_strang.slice!(last_key_length..(big_ol_strang.index(key) - 1))
+        output_buffer << big_ol_strang.slice!(last_key_length..(big_ol_strang.index(key, last_key_length) - 1))
         output_buffer << chunks.delete(key)
 
         last_key_length = key.length
