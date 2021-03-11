@@ -47,11 +47,8 @@ module ChunkyCache
       output_buffer = ActiveSupport::SafeBuffer.new
 
       chunks.keys.each do |key|
-        output_buffer << big_ol_strang.slice!(0..(big_ol_strang.index(key) - 1)).html_safe
-
-        # Remove the key
-        big_ol_strang.slice!(key)
-        
+        pre, big_ol_strang = *big_ol_strang.split(key, 2)
+        output_buffer << pre.html_safe
         output_buffer << chunks.delete(key)
       end
 
