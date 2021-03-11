@@ -162,7 +162,7 @@ RSpec.describe ChunkyCache do
     end
 
     describe "cache store" do
-      let(:index_hash)   { "4b78493b1fdc7b9f27edea909b60c6cc" }
+      let(:index_hash)   { "111849734f3c3a16b00439f9cc6a5a1c" }
       let(:partial_hash) { "277f6a046819c38de176f435dd15c5fb" }
 
       it "only calls the cache once with all keys" do
@@ -176,6 +176,7 @@ RSpec.describe ChunkyCache do
           "articles/_beercan:#{partial_hash}:chunky:revelation",
           "articles/_beercan:#{partial_hash}:beercan:revelation",
           "articles/_beercan:#{partial_hash}:probably:revelation",
+          "articles/index:#{index_hash}:ordering_test"
           { expires_in: 10.minutes }
         ).and_call_original
 

@@ -16,7 +16,7 @@ module ChunkyCache
     def chunky_cache(**cache_options)
       # Return if the memory cache is already established, as an outer run of
       # this method is in progress already
-      return yield if memory_cache.present?
+      return capture { yield } if memory_cache.present?
 
       # Set up the in-memory cache for this block
       establish_memory_cache(cache_options)
