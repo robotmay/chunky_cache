@@ -164,9 +164,8 @@ RSpec.describe ChunkyCache do
     describe "cache store" do
       let(:index_hash)   { "111849734f3c3a16b00439f9cc6a5a1c" }
       let(:partial_hash) { "277f6a046819c38de176f435dd15c5fb" }
-
-      it "only calls the cache once with all keys" do
-        expect(Rails.cache).to receive(:fetch_multi).once.with(
+      let(:keys) do
+        [
           "articles/index:#{index_hash}:h2",
           "articles/index:#{index_hash}:cartoon",
           "articles/index:#{index_hash}:fox",
@@ -176,11 +175,24 @@ RSpec.describe ChunkyCache do
           "articles/_beercan:#{partial_hash}:chunky:revelation",
           "articles/_beercan:#{partial_hash}:beercan:revelation",
           "articles/_beercan:#{partial_hash}:probably:revelation",
-          "articles/index:#{index_hash}:ordering_test",
+          "articles/index:#{index_hash}:ordering_test"
+        ]
+
+      it "only calls the cache once with all keys" do
+        expect(Rails.cache).to receive(:fetch_multi).once.with(
+          *keys,
           { expires_in: 10.minutes }
         ).and_call_original
 
         get :index
+      end
+
+      it "doesn't include the keys in the response" do
+        get :index
+
+        keys.each do |key|
+          expect(response.body).to_not include(key)
+        end
       end
     end
   end
