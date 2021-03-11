@@ -17,5 +17,9 @@
     <h3>How does it go? Chunky...beercan? :confused:</h3>
   <% end %>
 
-  <%= render partial: "beercan" %>
+  <%= render partial: "beercan", collection: %w(chunky beercan probably), as: :werd %>
+
+  <%= cache_chunk(:ordering_test) do %>
+    <p>This chunk should be fetched after the partials</p>
+  <% end %>
 <% end %>
