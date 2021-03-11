@@ -41,7 +41,7 @@ module ChunkyCache
         capture do
           block, context = *blocks[missing_key]
           block.call(*context)
-        end || ""
+        end
       end
 
       output_buffer = ActiveSupport::SafeBuffer.new
