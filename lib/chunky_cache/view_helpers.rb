@@ -21,6 +21,9 @@ module ChunkyCache
       # Set up the in-memory cache for this block
       establish_memory_cache(cache_options)
 
+      # Exit out if caching isn't enabled
+      return yield unless memory_cache[:perform_caching]
+
       blocks = memory_cache[:key_blocks]
       output_buffer = ActiveSupport::SafeBuffer.new
 
@@ -31,10 +34,7 @@ module ChunkyCache
 
       # This probably shouldn't happen
       return if big_ol_strang.nil?
-
-      # Exit out if caching isn't enabled
-      return big_ol_strang unless memory_cache[:perform_caching]
-  
+      
       # Now the cache blocks are populated and the placeholders in place,
       # we multi-fetch all the keys from the cache, or call the `cache_chunk` blocks
       # for missing values.
@@ -51,9 +51,9 @@ module ChunkyCache
         output_buffer << chunks.delete(key)
       end
 
-      output_buffer
-    ensure
       reset_memory_cache
+
+      output_buffer
     end
 
     # Denote a cached chunk of markup. This captures the block
