@@ -42,7 +42,7 @@ module ChunkyCache
       chunks = Rails.cache.fetch_multi(*blocks.keys, **cache_options) do |missing_key|
         capture do
           block, context = *blocks[missing_key]
-          block.call(*context)
+          block.call(*context) || ""
         end
       end
 
