@@ -42,8 +42,8 @@ module ChunkyCache
       chunks = Rails.cache.fetch_multi(*blocks.keys, **cache_options) do |missing_key|
         capture do
           block, context = *blocks[missing_key]
-          block.call(*context) || ""
-        end
+          block.call(*context)
+        end || ""
       end
 
       MultiStringReplace.replace(big_ol_strang, chunks).html_safe
