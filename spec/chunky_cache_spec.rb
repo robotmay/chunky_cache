@@ -177,6 +177,7 @@ RSpec.describe ChunkyCache do
           "articles/_beercan:#{partial_hash}:probably:revelation",
           "articles/index:#{index_hash}:ordering_test"
         ]
+      end
 
       it "only calls the cache once with all keys" do
         expect(Rails.cache).to receive(:fetch_multi).once.with(
