@@ -44,12 +44,9 @@ module ChunkyCache
         end
       end
 
-      # Then we replace the placeholders with our new compiled template data
-      repopulated = MultiStringReplace.replace(big_ol_strang, chunks)
-
       reset_memory_cache
 
-      repopulated.html_safe
+      (big_ol_strang % chunks).html_safe
     end
 
     # Denote a cached chunk of markup. This captures the block
