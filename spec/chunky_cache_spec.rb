@@ -176,7 +176,7 @@ RSpec.describe ChunkyCache do
           "articles/_beercan:#{partial_hash}:chunky:revelation",
           "articles/_beercan:#{partial_hash}:beercan:revelation",
           "articles/_beercan:#{partial_hash}:probably:revelation",
-          "articles/index:#{index_hash}:ordering_test"
+          "articles/index:#{index_hash}:ordering_test",
           { expires_in: 10.minutes }
         ).and_call_original
 
