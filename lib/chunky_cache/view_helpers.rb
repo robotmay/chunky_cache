@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "multi_string_replace"
-
 module ChunkyCache
   module ViewHelpers
     # Begin an exciting cache block. This has to wrap
@@ -46,8 +44,17 @@ module ChunkyCache
         end || ""
       end
 
-      MultiStringReplace.replace(big_ol_strang, chunks).html_safe
-      
+      output_buffer = ActiveSupport::SafeBuffer.new
+      last_key_length = 0
+
+      chunks.keys.each do |key|
+        output_buffer << big_ol_strang.slice!(last_key_length..(big_ol_strang.index(key) - 1))
+        output_buffer << chunks.delete(key)
+
+        last_key_length = key.length
+      end
+
+      output_buffer.html_safe
     ensure
       reset_memory_cache
     end
