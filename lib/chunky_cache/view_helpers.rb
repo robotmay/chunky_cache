@@ -17,9 +17,12 @@ module ChunkyCache
       # Return if the memory cache is already established, as an outer run of
       # this method is in progress already
       return yield if memory_cache.present?
-      return yield unless memory_cache[:perform_caching]
 
+      # Set up the in-memory cache for this block
       establish_memory_cache(cache_options)
+
+      # Exit out if caching isn't enabled
+      return yield unless memory_cache[:perform_caching]
 
       blocks = memory_cache[:key_blocks]
 
