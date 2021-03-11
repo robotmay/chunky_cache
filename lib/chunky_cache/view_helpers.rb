@@ -45,10 +45,10 @@ module ChunkyCache
         end
       end
 
-      chunks.keys.each do |key|
+      chunks.each do |key, chunk|
         pre, big_ol_strang = *big_ol_strang.split(key, 2)
         output_buffer << pre.html_safe
-        output_buffer << chunks.delete(key)
+        output_buffer << chunk
       end
 
       reset_memory_cache
