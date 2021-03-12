@@ -53,6 +53,19 @@ to persist the context (i.e. it'll be super borked if you don't do this):
       h1= article.title
 ```
 
+`cache_chunk` calls inside partials rendered inside the main `chunky_cache` call will also be picked up, this allows you to execute one network request for multiple chunks inside multiple view renders, e.g.
+
+```slim
+= chunky_cache(expires_in: 1.hour) do
+  = render partial: "foxes", collection: @foxes
+
+# Then inside _foxes.html.slim
+
+= chunky_cache(expires_in: 1.hour) do # this will defer to the parent call, and isn't necessary
+  = cache_chunk(fox) do |fox|
+    = "Hello #{fox}"
+```
+
 ## How does it work?
 
 The helpers use Rails' built-in helper `capture` to consume the contents of their blocks and turn them into strings. `chunky_cache` does this immediately, and returns the final output after mixing everything together. But `cache_chunk` doesn't execute its block, instead storing it in an instance variable established by `chunky_cache`, and it then returns a cache key string. At this point the template is thus half-complete, with sections missing and only weird strings in their place.
