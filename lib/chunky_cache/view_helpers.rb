@@ -34,7 +34,7 @@ module ChunkyCache
 
       # This probably shouldn't happen
       return if big_ol_strang.nil?
-      
+
       # Now the cache blocks are populated and the placeholders in place,
       # we multi-fetch all the keys from the cache, or call the `cache_chunk` blocks
       # for missing values.
